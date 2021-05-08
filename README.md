@@ -40,9 +40,11 @@
 
    讲解ObjectStateFormatter反序列化以及RolePrincipal、WindowsPrincipal攻击链。
 
-7. DataContractSerializer
+7. [DataContractSerializer](./DataContractSerializer.md)
 
-8. NetDataContractSerializer
+   讲解DataContractSerializer反序列化以及SessionViewStateHistoryItem攻击链。
+
+8. NetDataContractSerializer PSObject ToolboxItemContainer
 
 9. Json.Net
 
