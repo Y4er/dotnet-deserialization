@@ -44,15 +44,19 @@
 
    讲解DataContractSerializer反序列化以及SessionViewStateHistoryItem攻击链。
 
-8. NetDataContractSerializer PSObject ToolboxItemContainer
+8. [NetDataContractSerializer](./NetDataContractSerializer.md)
 
-9. Json.Net
+   讲解NetDataContractSerializer反序列化以及PSObject攻击链
 
-10. Fastjson
+9. [Nancy](./Nancy.md) cookie反序列化及攻击链ToolboxItemContainer
 
-11. JavaScriptSerializer
+10. Json.Net
 
-12. .NET Remoting
+11. Fastjson
+
+12. JavaScriptSerializer
+
+13. .NET Remoting
 
 # gadget
 
