@@ -272,8 +272,9 @@ namespace NetDataContractDeserialize
 
 # 审计
 
-关注NetDataContractSerializer传入xml的内容是否可控
+关注NetDataContractSerializer传入xml的内容是否可控，以及在上文中DataContractSerializer同理的DataContractResolver自定义类型解析器对于type的处理。还有就是构造函数的IDataContractSurrogate参数，关注其实现。**这个在DataContractJsonSerializer一节中讲解，本文不讲。**
 
 # 后文
 
 本文讲解了NetDataContractSerializer的序列化和反序列化，以及PSObject利用链。
+

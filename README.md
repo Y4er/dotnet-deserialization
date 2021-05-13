@@ -28,77 +28,41 @@
 
    讲解二进制formatter基础及TextFormattingRunProperties、DataSet、TypeConfuseDelegate攻击链
    
-4. [SoapFormatter](./SoapFormatter.md)
+4. [Nancy cookie反序列化](./Nancy.md) 及攻击链ToolboxItemContainer
+
+5. [SoapFormatter](./SoapFormatter.md)
 
    讲解soap格式流的反序列化漏洞及ActivitySurrogateSelector、ActivitySurrogateSelectorFromFile、ActivitySurrogateDisableTypeCheck、AxHostState攻击链和Kentico CMS的RCE
-   
-5. [LosFormatter](./LosFormatter.md)
+
+6. [LosFormatter](./LosFormatter.md)
 
    讲解LosFormatter反序列化，以及ClaimsIdentity、WindowsIdentity、WindowsClaimsIdentity、SessionSecurityToken攻击链。
 
-6. [ObjectStateFormatter](./ObjectStateFormatter.md)
+7. [ObjectStateFormatter](./ObjectStateFormatter.md)
 
    讲解ObjectStateFormatter反序列化以及RolePrincipal、WindowsPrincipal攻击链。
 
-7. [DataContractSerializer](./DataContractSerializer.md)
+8. [DataContractSerializer](./DataContractSerializer.md)
 
-   讲解DataContractSerializer反序列化以及SessionViewStateHistoryItem攻击链。
+   讲解DataContractSerializer反序列化、SessionViewStateHistoryItem攻击链，以及对DataContractResolver类型解析器的利用。
 
-8. [NetDataContractSerializer](./NetDataContractSerializer.md)
+9. [NetDataContractSerializer](./NetDataContractSerializer.md)
 
    讲解NetDataContractSerializer反序列化以及PSObject攻击链
 
-9. [Nancy](./Nancy.md) cookie反序列化及攻击链ToolboxItemContainer
+10. [DataContractJsonSerializer](./DataContractJsonSerializer.md)
 
-10. Json.Net
+    讲解DataContractJsonSerializer反序列化及IDataContractSurrogate接口
 
-11. Fastjson
+11. Json.Net
 
 12. JavaScriptSerializer
 
-13. .NET Remoting
+13. Fastjson
 
-# gadget
+14. .NET Remoting
 
-```
-== GADGETS ==
-        (-) ActivitySurrogateDisableTypeCheck [Disables 4.8+ type protections for ActivitySurrogateSelector, command is ignored]
-                Formatters: BinaryFormatter , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (-) ActivitySurrogateSelector [This gadget ignores the command parameter and executes the constructor of ExploitClass class] (supports extra options: use the '--fullhelp' argument to view)
-                Formatters: BinaryFormatter (2) , LosFormatter , SoapFormatter
-        (-) ActivitySurrogateSelectorFromFile [Another variant of the ActivitySurrogateSelector gadget. This gadget interprets the command parameter as path to the .cs file that should be compiled as exploit class. Use semicolon to separate the file from additionally required assemblies, e. g., '-c ExploitClass.cs;System.Windows.Forms.dll'] (supports extra options: use the '--fullhelp' argument to view)
-                Formatters: BinaryFormatter (2) , LosFormatter , SoapFormatter
-        (-) AxHostState
-                Formatters: BinaryFormatter , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (*) ClaimsIdentity
-                Formatters: BinaryFormatter , LosFormatter , SoapFormatter
-        (-) DataSet
-                Formatters: BinaryFormatter , LosFormatter , SoapFormatter
-        (-) ObjectDataProvider (supports extra options: use the '--fullhelp' argument to view)
-                Formatters: DataContractSerializer (2) , FastJson , FsPickler , JavaScriptSerializer , Json.Net , SharpSerializerBinary , SharpSerializerXml , Xaml (4) , XmlSerializer (2) , YamlDotNet < 5.0.0
-        (*) PSObject [Target must run a system not patched for CVE-2017-8565 (Published: 07/11/2017)]
-                Formatters: BinaryFormatter , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (*) RolePrincipal
-                Formatters: BinaryFormatter , DataContractSerializer , Json.Net , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (*) SessionSecurityToken
-                Formatters: BinaryFormatter , DataContractSerializer , Json.Net , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (*) SessionViewStateHistoryItem
-                Formatters: BinaryFormatter , DataContractSerializer , Json.Net , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (-) TextFormattingRunProperties [This normally generates the shortest payload] (supports extra options: use the '--fullhelp' argument to view)
-                Formatters: BinaryFormatter , DataContractSerializer , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (*) ToolboxItemContainer
-                Formatters: BinaryFormatter , LosFormatter , SoapFormatter
-        (-) TypeConfuseDelegate
-                Formatters: BinaryFormatter , LosFormatter , NetDataContractSerializer
-        (-) TypeConfuseDelegateMono [Tweaked TypeConfuseDelegate gadget to work with Mono]
-                Formatters: BinaryFormatter , LosFormatter , NetDataContractSerializer
-        (*) WindowsClaimsIdentity [Requires Microsoft.IdentityModel.Claims namespace (not default GAC)] (supports extra options: use the '--fullhelp' argument to view)
-                Formatters: BinaryFormatter (3) , DataContractSerializer (2) , Json.Net (2) , LosFormatter (3) , NetDataContractSerializer (3) , SoapFormatter (2)
-        (*) WindowsIdentity
-                Formatters: BinaryFormatter , DataContractSerializer , Json.Net , LosFormatter , NetDataContractSerializer , SoapFormatter
-        (*) WindowsPrincipal
-                Formatters: BinaryFormatter , DataContractJsonSerializer , DataContractSerializer , Json.Net , LosFormatter , NetDataContractSerializer , SoapFormatter
-```
+
 
 # 关于
 

