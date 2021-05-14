@@ -56,7 +56,9 @@
 
 11. Json.Net
 
-12. JavaScriptSerializer
+12. [JavaScriptSerializer](./JavaScriptSerializer.md)
+
+    讲解JavaScriptSerializer反序列化
 
 13. Fastjson
 
