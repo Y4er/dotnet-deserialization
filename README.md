@@ -54,11 +54,13 @@
 
     讲解DataContractJsonSerializer反序列化及IDataContractSurrogate接口
 
-11. Json.Net
-
-12. [JavaScriptSerializer](./JavaScriptSerializer.md)
+11. [JavaScriptSerializer](./JavaScriptSerializer.md)
 
     讲解JavaScriptSerializer反序列化
+
+12. [Json.Net](./Json.Net.md)
+
+    讲解了json.net反序列化，并结合实际案例 breeze CVE-2017-9424深入理解。
 
 13. Fastjson
 
