@@ -62,7 +62,9 @@
 
     讲解了json.net反序列化，并结合实际案例 breeze CVE-2017-9424深入理解。
 
-13. Fastjson
+13. [Fastjson](./Fastjson.md)
+
+    讲解fastjson反序列化漏洞
 
 14. .NET Remoting
 
