@@ -68,6 +68,8 @@
 
 14. [.NET Remoting](./.NET Remoting.md)
 
+    讲解.net remoting漏洞
+
 
 
 # 关于
