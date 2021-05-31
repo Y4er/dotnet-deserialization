@@ -66,9 +66,11 @@
 
     讲解fastjson反序列化漏洞
 
-14. [.NET Remoting](./.NET%20Remoting.md)
+14. [.NET Remoting](./.NET Remoting.md)
 
     讲解.net remoting漏洞
+    
+15. [SharePoint CVE-2019-0604](./SharePoint-CVE-2019-0604.md)
 
 
 
