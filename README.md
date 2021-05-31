@@ -66,7 +66,7 @@
 
     讲解fastjson反序列化漏洞
 
-14. [.NET Remoting](./.NET Remoting.md)
+14. [.NET Remoting](./.NET%20Remoting.md)
 
     讲解.net remoting漏洞
     
