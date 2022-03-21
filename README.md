@@ -76,6 +76,18 @@
 
 16. [ViewState](./ViewState.md)
 
+# 一些文章
+下面是笔者对于dotnet审计时收集的一些文章。
+
+- [CVE-2022-26500 Veeam Backup & Replication RCE](https://y4er.com/post/cve-2022-26500-veeam-backup-replication-rce/)
+- [从dotnet源码看文件上传绕waf](https://y4er.com/post/fileupload-bypass-with-dotnet/)
+- [Dotnet 反序列化的另外几个gadget](https://y4er.com/post/several-other-gadgets-of-dotnet/)
+- [CVE-2021-34992 Orckestra C1 CMS Deserialization RCE](https://y4er.com/post/cve-2021-34992-orckestra-c1-cms-deserialization-rce/)
+- [Some notes of Microsoft Exchange Deserialization RCE (CVE-2021–42321)](https://testbnull.medium.com/some-notes-of-microsoft-exchange-deserialization-rce-cve-2021-42321-f6750243cdcd)
+- [50 Shades of SolarWinds Orion Deserialization (Part 1: CVE-2021–35215)](https://testbnull.medium.com/50-shades-of-solarwinds-orion-deserialization-part-1-cve-2021-35215-2e5764e0e4f2)
+- [https://twitter.com/Y4er_ChaBug/status/1453971672629796865](https://twitter.com/Y4er_ChaBug/status/1453971672629796865)
+- [50 Shades of SolarWinds Orion (Patch Manager) Deserialization (Final Part: CVE-2021–35218)](https://testbnull.medium.com/50-shades-of-solarwinds-orion-patch-manager-deserialization-final-part-cve-2021-35218-3d38166cb81f)
+
 # 关于
 
 ID:Y4er
