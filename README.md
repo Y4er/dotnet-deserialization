@@ -87,6 +87,7 @@
 - [50 Shades of SolarWinds Orion Deserialization (Part 1: CVE-2021–35215)](https://testbnull.medium.com/50-shades-of-solarwinds-orion-deserialization-part-1-cve-2021-35215-2e5764e0e4f2)
 - [https://twitter.com/Y4er_ChaBug/status/1453971672629796865](https://twitter.com/Y4er_ChaBug/status/1453971672629796865)
 - [50 Shades of SolarWinds Orion (Patch Manager) Deserialization (Final Part: CVE-2021–35218)](https://testbnull.medium.com/50-shades-of-solarwinds-orion-patch-manager-deserialization-final-part-cve-2021-35218-3d38166cb81f)
+- [CVE-2022-26503 Veeam Agent for Microsoft Windows LPE](https://y4er.com/post/cve-2022-26503-veeam-agent-for-microsoft-windows-lpe/)
 
 # 关于
 
