@@ -88,6 +88,7 @@
 - [https://twitter.com/Y4er_ChaBug/status/1453971672629796865](https://twitter.com/Y4er_ChaBug/status/1453971672629796865)
 - [50 Shades of SolarWinds Orion (Patch Manager) Deserialization (Final Part: CVE-2021–35218)](https://testbnull.medium.com/50-shades-of-solarwinds-orion-patch-manager-deserialization-final-part-cve-2021-35218-3d38166cb81f)
 - [CVE-2022-26503 Veeam Agent for Microsoft Windows LPE](https://y4er.com/post/cve-2022-26503-veeam-agent-for-microsoft-windows-lpe/)
+- [Pwning 3CX Phone Management Backends from the Internet](https://medium.com/@frycos/pwning-3cx-phone-management-backends-from-the-internet-d0096339dd88)
 
 # 关于
 
