@@ -1,3 +1,4 @@
+![logo](./logo.png)
 # dotnet deserialization
 
 本系列是笔者从0到1对dotnet反序列化进行系统学习的笔记，其中涉及官方的反序列化formatter和第三方库的反序列化组件(如Json.net等)，其中穿插一些ysoserial.net的使用及原理，以及一些dotnet的知识点。
@@ -89,6 +90,7 @@
 - [50 Shades of SolarWinds Orion (Patch Manager) Deserialization (Final Part: CVE-2021–35218)](https://testbnull.medium.com/50-shades-of-solarwinds-orion-patch-manager-deserialization-final-part-cve-2021-35218-3d38166cb81f)
 - [CVE-2022-26503 Veeam Agent for Microsoft Windows LPE](https://y4er.com/post/cve-2022-26503-veeam-agent-for-microsoft-windows-lpe/)
 - [Pwning 3CX Phone Management Backends from the Internet](https://medium.com/@frycos/pwning-3cx-phone-management-backends-from-the-internet-d0096339dd88)
+- [HITCON 2023 x DEVCORE Wargame: My todolist Write-up](https://devco.re/blog/2023/09/18/hitcon-2023-devcore-wargame-my-todolist-writeup/)
 
 # 关于
 
