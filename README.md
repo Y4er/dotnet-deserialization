@@ -91,6 +91,7 @@
 - [CVE-2022-26503 Veeam Agent for Microsoft Windows LPE](https://y4er.com/post/cve-2022-26503-veeam-agent-for-microsoft-windows-lpe/)
 - [Pwning 3CX Phone Management Backends from the Internet](https://medium.com/@frycos/pwning-3cx-phone-management-backends-from-the-internet-d0096339dd88)
 - [HITCON 2023 x DEVCORE Wargame: My todolist Write-up](https://devco.re/blog/2023/09/18/hitcon-2023-devcore-wargame-my-todolist-writeup/)
+- [FINDING DESERIALIZATION BUGS IN THE SOLARWIND PLATFORM](https://www.zerodayinitiative.com/blog/2023/9/21/finding-deserialization-bugs-in-the-solarwind-platform)
 
 # 关于
 
